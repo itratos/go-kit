@@ -26,7 +26,7 @@ type mgo struct {
 	database string
 }
 
-func InitializeMongo(user, pass, database string) Mgo {
+func InitializeMongo(user, pass, database string) (Mgo, error) {
 	clientOptions := options.Client().
 		//ApplyURI("mongodb+srv://" + user + ":" + pass + "@dsms.tywcl.mongodb.net/dsms?retryWrites=true&w=majority")
 		ApplyURI("mongodb+srv://" + user + ":" + pass + "@" + database + ".tywcl.mongodb.net/" + database + "?retryWrites=true&w=majority")
@@ -35,11 +35,12 @@ func InitializeMongo(user, pass, database string) Mgo {
 	mongo, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 	log.Println("mongoDb connected successfully")
 	cliente := &mgo{
 		client:   mongo,
 		database: database,
 	}
-	return cliente
+	return cliente, nil
 }

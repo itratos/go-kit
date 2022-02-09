@@ -35,7 +35,7 @@ func ResolveConfiguration() Configuration {
 		log.Println(err)
 	}
 	log.Println(path)
-	file, err := os.Open("../application.yml")
+	file, err := os.Open("application.yml")
 	if err != nil {
 		log.Fatal(err)
 		return nil

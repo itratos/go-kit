@@ -30,6 +30,11 @@ func ResolveConfiguration() Configuration {
 		"password": "abc123",
 		"ip":       "127.0.0.1",
 	}
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(path)
 	file, err := os.Open("../application.yml")
 	if err != nil {
 		log.Fatal(err)

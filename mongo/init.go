@@ -19,6 +19,7 @@ type Mgo interface {
 	Delete(collectionName string, id int) (int, error)
 	DeleteByFilter(collectionName string, filter interface{}) (int, error)
 	GetId(collectionName string) int64
+	GetOneByFilterWd(dbname, collectionName string, filter interface{}) ([]byte, error)
 }
 
 type mgo struct {

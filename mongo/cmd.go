@@ -58,6 +58,22 @@ func (m *mgo) GetOneByFiler(collectionName string, filter interface{}) ([]byte, 
 	return bsonBytes, nil
 }
 
+func (m *mgo) GetOneByFilterWd(dbname, collectionName string, filter interface{}) ([]byte, error) {
+	collection := m.client.Database(dbname).Collection(collectionName)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var result bson.M
+	err := collection.FindOne(ctx, filter).Decode(&result)
+	defer cancel()
+	if err != nil {
+		return nil, err
+	}
+	bsonBytes, erro := bson.Marshal(result)
+	if erro != nil {
+		return nil, erro
+	}
+	return bsonBytes, nil
+}
+
 func (m *mgo) GetByFilter(collectionName string, filter interface{}) ([][]byte, error) {
 	log.Println(filter)
 	collection := m.client.Database(m.database).Collection(collectionName)

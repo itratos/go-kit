@@ -15,8 +15,8 @@ var (
 	NotFound = mongo.ErrNoDocuments.Error()
 )
 
-func (m *mgo) Insert(collectionName string, item interface{}) (string, error) {
-	collection := m.client.Database(m.database).Collection(collectionName)
+func (m *mgo) Insert(dbName, collectionName string, item interface{}) (string, error) {
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	res, err := collection.InsertOne(ctx, item)
 	defer cancel()
@@ -26,8 +26,8 @@ func (m *mgo) Insert(collectionName string, item interface{}) (string, error) {
 	return fmt.Sprint(res.InsertedID), nil
 }
 
-func (m *mgo) Get(collectionName string, id int) ([]byte, error) {
-	collection := m.client.Database(m.database).Collection(collectionName)
+func (m *mgo) Get(dbName, collectionName string, id int) ([]byte, error) {
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var result bson.M
 	err := collection.FindOne(ctx, bson.M{"id": id}).Decode(&result)
@@ -42,8 +42,8 @@ func (m *mgo) Get(collectionName string, id int) ([]byte, error) {
 	return bsonBytes, nil
 }
 
-func (m *mgo) GetOneByFiler(collectionName string, filter interface{}) ([]byte, error) {
-	collection := m.client.Database(m.database).Collection(collectionName)
+func (m *mgo) GetOneByFiler(dbName, collectionName string, filter interface{}) ([]byte, error) {
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var result bson.M
 	err := collection.FindOne(ctx, filter).Decode(&result)
@@ -74,9 +74,9 @@ func (m *mgo) GetOneByFilterWd(dbname, collectionName string, filter interface{}
 	return bsonBytes, nil
 }
 
-func (m *mgo) GetByFilter(collectionName string, filter interface{}) ([][]byte, error) {
+func (m *mgo) GetByFilter(dbName, collectionName string, filter interface{}) ([][]byte, error) {
 	log.Println(filter)
-	collection := m.client.Database(m.database).Collection(collectionName)
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var results []bson.M
 	cursor, err := collection.Find(ctx, filter)
@@ -99,9 +99,9 @@ func (m *mgo) GetByFilter(collectionName string, filter interface{}) ([][]byte, 
 	return bsonBytesArray, nil
 }
 
-func (m *mgo) Update(collectionName string, item interface{}, id int64) (int, error) {
+func (m *mgo) Update(dbName, collectionName string, item interface{}, id int64) (int, error) {
 
-	collection := m.client.Database(m.database).Collection(collectionName)
+	collection := m.client.Database(dbName).Collection(collectionName)
 	filter := bson.M{"id": id}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	update := bson.M{
@@ -115,9 +115,9 @@ func (m *mgo) Update(collectionName string, item interface{}, id int64) (int, er
 	return int(result.ModifiedCount), nil
 }
 
-func (m *mgo) UpdateWithFilter(collectionName string, item interface{}, filter interface{}) (int, error) {
+func (m *mgo) UpdateWithFilter(dbName, collectionName string, item interface{}, filter interface{}) (int, error) {
 
-	collection := m.client.Database(m.database).Collection(collectionName)
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	update := bson.M{
 		"$set": item,
@@ -130,9 +130,9 @@ func (m *mgo) UpdateWithFilter(collectionName string, item interface{}, filter i
 	return int(result.ModifiedCount), nil
 }
 
-func (m *mgo) Delete(collectionName string, id int) (int, error) {
+func (m *mgo) Delete(dbName, collectionName string, id int) (int, error) {
 
-	collection := m.client.Database(m.database).Collection(collectionName)
+	collection := m.client.Database(dbName).Collection(collectionName)
 	filter := bson.M{"id": id}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	result, err := collection.DeleteOne(ctx, filter)
@@ -143,9 +143,9 @@ func (m *mgo) Delete(collectionName string, id int) (int, error) {
 	return int(result.DeletedCount), nil
 }
 
-func (m *mgo) DeleteByFilter(collectionName string, filter interface{}) (int, error) {
+func (m *mgo) DeleteByFilter(dbName, collectionName string, filter interface{}) (int, error) {
 
-	collection := m.client.Database(m.database).Collection(collectionName)
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	result, err := collection.DeleteOne(ctx, filter)
 	defer cancel()
@@ -155,8 +155,8 @@ func (m *mgo) DeleteByFilter(collectionName string, filter interface{}) (int, er
 	return int(result.DeletedCount), nil
 }
 
-func (m *mgo) GetId(collectionName string) int64 {
-	collection := m.client.Database(m.database).Collection(collectionName)
+func (m *mgo) GetId(dbName, collectionName string) int64 {
+	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	id, err := collection.CountDocuments(ctx, bson.M{})

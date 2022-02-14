@@ -10,16 +10,15 @@ import (
 )
 
 type Mgo interface {
-	Insert(collectionName string, item interface{}) (string, error)
-	Get(collectionName string, id int) ([]byte, error)
-	GetOneByFiler(collectionName string, filter interface{}) ([]byte, error)
-	GetByFilter(collectionName string, filter interface{}) ([][]byte, error)
-	Update(collectionName string, item interface{}, id int64) (int, error)
-	UpdateWithFilter(collectionName string, item interface{}, filter interface{}) (int, error)
-	Delete(collectionName string, id int) (int, error)
-	DeleteByFilter(collectionName string, filter interface{}) (int, error)
-	GetId(collectionName string) int64
-	GetOneByFilterWd(dbname, collectionName string, filter interface{}) ([]byte, error)
+	Insert(dbName, collectionName string, item interface{}) (string, error)
+	Get(dbName, collectionName string, id int) ([]byte, error)
+	GetOneByFiler(dbName, collectionName string, filter interface{}) ([]byte, error)
+	GetByFilter(dbName, collectionName string, filter interface{}) ([][]byte, error)
+	Update(dbName, collectionName string, item interface{}, id int64) (int, error)
+	UpdateWithFilter(dbName, collectionName string, item interface{}, filter interface{}) (int, error)
+	Delete(dbName, collectionName string, id int) (int, error)
+	DeleteByFilter(dbName, collectionName string, filter interface{}) (int, error)
+	GetId(dbName, collectionName string) int64
 }
 
 type mgo struct {

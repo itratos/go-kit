@@ -42,6 +42,22 @@ func (m *mgo) Get(dbName, collectionName string, id int) ([]byte, error) {
 	return bsonBytes, nil
 }
 
+func (m *mgo) GetByUuid(dbName, collectionName string, id string) ([]byte, error) {
+	collection := m.client.Database(dbName).Collection(collectionName)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var result bson.M
+	err := collection.FindOne(ctx, bson.M{"id": id}).Decode(&result)
+	defer cancel()
+	if err != nil {
+		return nil, err
+	}
+	bsonBytes, erro := bson.Marshal(result)
+	if erro != nil {
+		return nil, erro
+	}
+	return bsonBytes, nil
+}
+
 func (m *mgo) GetOneByFiler(dbName, collectionName string, filter interface{}) ([]byte, error) {
 	collection := m.client.Database(dbName).Collection(collectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -115,6 +131,22 @@ func (m *mgo) Update(dbName, collectionName string, item interface{}, id int64) 
 	return int(result.ModifiedCount), nil
 }
 
+func (m *mgo) UpdateByUuid(dbName, collectionName string, item interface{}, id string) (int, error) {
+
+	collection := m.client.Database(dbName).Collection(collectionName)
+	filter := bson.M{"id": id}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	update := bson.M{
+		"$set": item,
+	}
+	result, err := collection.UpdateOne(ctx, filter, update)
+	defer cancel()
+	if err != nil {
+		return 0, err
+	}
+	return int(result.ModifiedCount), nil
+}
+
 func (m *mgo) UpdateWithFilter(dbName, collectionName string, item interface{}, filter interface{}) (int, error) {
 
 	collection := m.client.Database(dbName).Collection(collectionName)
@@ -131,6 +163,19 @@ func (m *mgo) UpdateWithFilter(dbName, collectionName string, item interface{}, 
 }
 
 func (m *mgo) Delete(dbName, collectionName string, id int) (int, error) {
+
+	collection := m.client.Database(dbName).Collection(collectionName)
+	filter := bson.M{"id": id}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	result, err := collection.DeleteOne(ctx, filter)
+	defer cancel()
+	if err != nil {
+		return 0, err
+	}
+	return int(result.DeletedCount), nil
+}
+
+func (m *mgo) DeleteByUuid(dbName, collectionName string, id string) (int, error) {
 
 	collection := m.client.Database(dbName).Collection(collectionName)
 	filter := bson.M{"id": id}

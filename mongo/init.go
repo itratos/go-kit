@@ -22,6 +22,7 @@ type Mgo interface {
 	DeleteByUuid(dbName, collectionName string, id string) (int, error)
 	DeleteByFilter(dbName, collectionName string, filter interface{}) (int, error)
 	GetId(dbName, collectionName string) int64
+	GetClient() *mongo.Client
 }
 
 type mgo struct {

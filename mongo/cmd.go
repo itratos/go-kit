@@ -211,3 +211,7 @@ func (m *mgo) GetId(dbName, collectionName string) int64 {
 	}
 	return id + int64(1)
 }
+
+func (m *mgo) GetClient() *mongo.Client {
+	return m.client
+}
